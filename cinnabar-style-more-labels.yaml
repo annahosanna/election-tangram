@@ -1,9 +1,9 @@
-# Cinnabar is a classic look and should be your go-to for general mapping applications. 
-# Give OpenStreetMap data a refined basemap skin using the Tangram graphics library and 
+# Cinnabar is a classic look and should be your go-to for general mapping applications.
+# Give OpenStreetMap data a refined basemap skin using the Tangram graphics library and
 # Mapzen's versatile Vector Tiles.
 #
-# This style is a High Road influenced evolution of the Traditional style Stamen created 
-# for Mapzen's Open Android app in 2014. Please use and adapt the open source scene file 
+# This style is a High Road influenced evolution of the Traditional style Stamen created
+# for Mapzen's Open Android app in 2014. Please use and adapt the open source scene file
 # in your own projects!
 #
 # Authors: Nathaniel V. Kelso, Geraldine Sarmiento
@@ -168,7 +168,7 @@ cinnabar-colors:
         - &building2   [.6, .6, .6]        # building stroke
         - &building_o  5                   # building stroke order
         - &building_e  true                # building stroke order
-    
+
     labels:
         - &text_fill          '#333'             # WHITE
         - &text_fill2         '#000'             # WHITE
@@ -450,7 +450,10 @@ sources:
     osm:
         type: TopoJSONTiles
         #url:  //localhost:8080//osm/all/{z}/{x}/{y}.topojson
-        url:  //vector.mapzen.com/osm/all/{z}/{x}/{y}.topojson?api_key=vector-tiles-M45zxG4
+        url:  //vector.mapzen.com/osm/all/{z}/{x}/{y}.topojson?api_key=vector-tiles-vqJh-uU
+    townships:
+        type: GeoJSON
+        url:  ./data/lowerhouse-winners.geojson
 
 camera:
     type: isometric
@@ -485,7 +488,7 @@ styles:
 
                     float chevron(vec2 st){
                         st = mirrorTile(st,vec2(1.,6.));
-                        float x = st.x*2.; 
+                        float x = st.x*2.;
                         float a = floor(1.+sin(x*3.14));
                         float b = floor(1.+sin((x+1.)*3.14));
                         float f = fract(x);
@@ -500,13 +503,13 @@ styles:
                     float xMargin(vec2 st,float margin){
                         return 1.0-clamp(step(margin*.5,st.x)*step(margin*.5,1.0-st.x),0.,1.);
                     }
-                    
+
                     //  Function from Iñigo Quiles
                     //  https://www.shadertoy.com/view/MsS3Wc
                     vec3 hsb2rgb( in vec3 c ){
                         vec3 rgb = clamp(abs(mod(c.x*6.0+vec3(0.0,4.0,2.0),
-                                                 6.0)-3.0)-1.0, 
-                                         0.0, 
+                                                 6.0)-3.0)-1.0,
+                                         0.0,
                                          1.0 );
                         rgb = rgb*rgb*(3.0-2.0*rgb);
                         return c.z * mix(vec3(1.0), rgb, c.y);
@@ -514,10 +517,10 @@ styles:
                 color: |
                     vec2 st = v_texcoord;
                     vec4 foreground = vec4(0.400,0.400,0.400,1.0);
-                    
+
                     vec3 color1 = hsb2rgb(vec3(color.r,1.,1.));
                     vec3 color2 = hsb2rgb(vec3(color.g,1.,1.));
-                    
+
                     // Nathaniel un-comment the following lines
                      color = mix(v_color,foreground, chevron(st) - xMargin(st,.25) );
                      color = mix(v_color,foreground, stripes(st) );
@@ -532,10 +535,10 @@ styles:
                     // GridTile
                     //=============================
                     varying vec3 v_pos;
-                    
+
                     #ifdef TANGRAM_FRAGMENT_SHADER
-                    
-                    vec2 TileCoords() { 
+
+                    vec2 TileCoords() {
                         return fract(v_pos.xy*0.0002445);
                     }
 
@@ -563,7 +566,7 @@ styles:
                         return smoothstep(threshold-afwidth, threshold+afwidth, value);
                       #else
                         return step(threshold, value);
-                      #endif  
+                      #endif
                     }
 
                     vec2 tile(vec2 _st, float _zoom){
@@ -664,7 +667,7 @@ styles:
         shaders:
             blocks:
                 filter: |
-                    vec2 st = (TileCoords()+vec2(.4))*1000.; 
+                    vec2 st = (TileCoords()+vec2(.4))*1000.;
                     color.rgb = mix(vec3(0.899,0.95,1.0), vec3(0.899,0.95,1.0), gl_FragCoord.x / u_resolution.x);
                     color.rgb -= grain(gl_FragCoord.xy)*0.1;
 
@@ -698,6 +701,32 @@ scene:
 
 layers:
     # Map overlays for styling the server response (using special source layer names) for route line, find_me location gem, and search result pins
+
+    townships:
+        data: { source: townships }
+        nld:
+            filter:
+                any:
+                    - { winner: 40 }
+            draw:
+                polygons:
+                    color: '#fcc'
+                lines:
+                    color: '#000'
+                    width: 1.5px
+                    order: 100
+        usdp:
+            filter:
+                any:
+                    - { winner: 29 }
+            draw:
+                polygons:
+                    color: '#cfc'
+                lines:
+                    color: '#000'
+                    width: 1.5px
+                    order: 100
+
     route:
         data: { source: route }
         draw:
@@ -785,7 +814,7 @@ layers:
                     width: [[10,1px],[12,2px]]
                     join: round
         water_boundaries-not-ocean:
-            filter: 
+            filter:
                 all:
                     - boundary: yes
                     - not: { kind: ocean }
@@ -878,7 +907,7 @@ layers:
             text:
                 visible: false    # labels are enabled by each layer below
                 font:
-                    family: Helvetica
+                    family: NotoSansMyanmar
                     weight: 500
 
         # default outlines starting at zoom 16
@@ -1314,7 +1343,7 @@ layers:
                                 outline:
                                     color: *green1_r
                 labels-secondary-z13:
-                    filter: 
+                    filter:
                         $zoom: [13,14]
                     draw:
                         text:
@@ -1326,7 +1355,7 @@ layers:
                                 size: 10px
                                 stroke: { color: *text_stroke_road4, width: 2 }
                 labels-secondary-z15:
-                    filter: 
+                    filter:
                         $zoom: [15]
                     draw:
                         text:
@@ -1338,7 +1367,7 @@ layers:
                                 size: 11px
                                 stroke: { color: *text_stroke_road3, width: 3 }
                 labels-secondary-z16:
-                    filter: 
+                    filter:
                         $zoom: [16]
                     draw:
                         text:
@@ -1495,7 +1524,7 @@ layers:
                 draw:
                     lines:
                         order: 15
-            
+
             in_park:
                 filter: { landuse_kind: [park,protected_area,nature_reserve,conservation,golf_course,garden,wood,farmland,farm] }
                 draw:
@@ -1958,7 +1987,7 @@ layers:
     # buildings are the only layer that gets lighting
     buildings:
         data: { source: osm, layer: buildings }
-        filter: 
+        filter:
             any:
                 # limit show smaller landuse areas to higher zooms
                 - { $zoom: [13], area: { min: 100000 }, name: true }
@@ -2044,7 +2073,7 @@ layers:
 #            draw:
 #                polygons:
 #                    color: orange
-                
+
     building-labels:
         data: { source: osm, layer: buildings }
         filter:
@@ -2068,7 +2097,7 @@ layers:
                 order: 7
                 font:
                     fill: *text_fill
-                    family: Helvetica
+                    family: NotoSansMyanmar
                     style: italic
                     size: 12px
                     stroke: { color: *text_stroke_building, width: 4 }
@@ -2090,7 +2119,7 @@ layers:
                     text_source: function() { if( feature.addr_housenumber /*&& !feature.name.indexof(feature.addr_housenumber) > -1*/) { return feature.name + '\n' + feature.addr_housenumber; } else { return feature.name; } }
     address-labels:
         data: { source: osm, layer: buildings }
-        filter: 
+        filter:
             all:
                 - { $zoom: { min: 20 }, kind: address }
                 - { $zoom: { min: 20 }, [ kind: true, addr_housenumber: true, name: false ] }
@@ -2101,7 +2130,7 @@ layers:
                 text_source: addr_housenumber
                 font:
                     fill: *text_fill_building
-                    family: Helvetica
+                    family: NotoSansMyanmar
                     style: italic
                     size: 10px
                     stroke: { color: *building1, width: 4 }
@@ -2111,7 +2140,6 @@ layers:
         # country subdivisions (states, provinces)
         draw:
             lines:
-                interactive: true
                 order: 11
 #                color: red
 #                width: [[8, 1px], [14, 2px], [16, 3px], [17, 8m]]
@@ -2133,29 +2161,6 @@ layers:
                     lines:
                         order: 9
                         color: blue
-        region:
-            filter:
-                any:
-                    - type: state
-                    # territorial here is probably a hack
-                    - kind: [state, department, region, provincial, territorial]
-                    - admin_level: 4
-            draw:
-                lines:
-                    interactive: true
-                    order: 12
-                    color: *region_boundary
-                    width: [[2, 0.75px], [3, 1px], [5, 1.5px], [9, 3.5px], [14, 5.5px], [16, 6.5px], [17, 16m]]
-            water:
-                filter: { maritime_boundary: yes }
-                draw:
-                    lines:
-                        visible: false
-            early:
-                filter: { scalerank: [0,3,4,5,6,7,8,9,10], $zoom: { max: 8 } }
-                draw:
-                    lines:
-                        visible: false
 
 #        subregions:
 #            filter: { kind: county, $zoom: { min: 10 } }
@@ -2173,7 +2178,7 @@ layers:
             text:
                 visible: false    # labels are enabled by each layer below
                 font:
-                    family: Helvetica
+                    family: NotoSansMyanmar
                     weight: 500
 
         continent:
@@ -2194,7 +2199,7 @@ layers:
                 text:
                     priority: 2
                     visible: *text_visible_admin
-                    text_source: function() { if(feature["name:en"]) { return feature["name:en"].toUpperCase(); } else { return feature["name"].toUpperCase(); } }
+                    text_source: function() { if(feature["name:my"]) { return feature["name:my"].toUpperCase(); } else { return feature["name"].toUpperCase(); } }
                     font:
                         size: 11px
                         weight: 200
@@ -2234,7 +2239,7 @@ layers:
                 text:
                     priority: 2
                     visible: *text_visible_admin
-                    text_source: function() { if(feature["name:en"]) { return feature["name:en"].toUpperCase(); } else { return feature["name"].toUpperCase(); } }
+                    text_source: function() { if(feature["name:my"]) { return feature["name:my"].toUpperCase(); } else { return feature["name"].toUpperCase(); } }
                     font:
                         size: 14px
                         weight: 800
@@ -2256,7 +2261,7 @@ layers:
                 text:
                     priority: 2
                     visible: *text_visible_admin
-                    text_source: 'name:short'
+                    text_source: function() { if(feature["name:my"]) { return feature["name:my"].toUpperCase(); } else { return feature["name:my"].toUpperCase(); } }
                     font:
                         size: 10px
                         weight: 200
@@ -2268,7 +2273,7 @@ layers:
                 text:
                     priority: 2
                     visible: *text_visible_admin
-                    text_source: 'name:short'
+                    text_source: function() { if(feature["name:my"]) { return feature["name:my"].toUpperCase(); } else { return feature["name:my"].toUpperCase(); } }
                     font:
                         size: 13px
                         weight: 200
@@ -2280,7 +2285,7 @@ layers:
                 text:
                     priority: 2
                     visible: *text_visible_admin
-                    text_source: 'name:short'
+                    text_source: function() { if(feature["name:my"]) { return feature["name:my"].toUpperCase(); } else { return feature["name:my"].toUpperCase(); } }
                     font:
                         size: 15px
                         weight: 200
@@ -2291,7 +2296,7 @@ layers:
                 text:
                     priority: 2
                     visible: *text_visible_admin
-                    text_source: function() { if(feature["name:short"]) { return feature["name"]; } else { return "" } }
+                    text_source: function() { if(feature["name:my"]) { return feature["name:my"].toUpperCase(); } else { return feature["name"]; } }
                     font:
                         size: 14px
                         weight: 800
@@ -2678,7 +2683,7 @@ layers:
                             text:
                                 font:
                                     size: 13px
-            
+
                 z8places-3:
                     filter:
                         any:
@@ -2774,7 +2779,7 @@ layers:
                             text:
                                 font:
                                     size: 10px
-                                    
+
             populated-places-natural-earth-z8-backfill:
                 filter: { name: true, source: naturalearthdata.com, $zoom: [8], population: { max: 50000 } }
                 draw: { text: { font: { fill: *text_fill } } }
@@ -2858,7 +2863,7 @@ layers:
                             text:
                                 font:
                                     size: 12px
-                                    
+
             populated-places-osm-z9:
                 filter:
                     all:
@@ -3114,7 +3119,7 @@ layers:
                         - not: { kind: [country, county, state, island, neighbourhood, suburb, quarter] }
                         - $zoom: [10]
                 draw: { text: { font: { fill: *text_fill } } }
-                
+
                 z10places-1:
                     filter:
                         any:
@@ -3268,12 +3273,12 @@ layers:
                                     size: 12px
 
             populated-places-osm-z11:
-                filter: 
+                filter:
                     all:
                         - source: openstreetmap
                         - name: true
                         - population: true
-                        - not: { kind: [country, county, state, island, neighbourhood, suburb, quarter] } 
+                        - not: { kind: [country, county, state, island, neighbourhood, suburb, quarter] }
                         - $zoom: [11]
                         - kind: [city,town]
                 draw: { text: { font: { fill: *text_fill } } }
@@ -3399,12 +3404,12 @@ layers:
                                     size: 12px
 
             populated-places-osm-z12:
-                filter: 
+                filter:
                     all:
                         - source: openstreetmap
                         - name: true
                         - population: true
-                        - not: { kind: [country, county, state, island, neighbourhood, suburb, quarter] } 
+                        - not: { kind: [country, county, state, island, neighbourhood, suburb, quarter] }
                         - $zoom: [12]
                         - kind: [city,town]
                 draw: { text: { font: { fill: *text_fill, weight: 600 } } }
@@ -3413,7 +3418,7 @@ layers:
                     filter:
                         any:
                             - { population: { min: 1000000 } }
-                        
+
                     draw:
                         text:
                             priority: 1
@@ -3529,7 +3534,7 @@ layers:
                             text:
                                 font:
                                     size: 12px
-                                    
+
             populated-places-osm:
                 filter: { name: true, source: openstreetmap, not: { kind: [country, county, state, island, neighbourhood, suburb, quarter] }, $zoom: { min: 13 } }
                 draw:
@@ -3548,7 +3553,7 @@ layers:
                     filter:
                         any:
                             - { population: { min: 1000000 } }
-                        
+
                     draw:
                         text:
                             font:
@@ -3781,7 +3786,7 @@ layers:
     pois_and_landuse_labels:
         data: { source: osm, layer: [pois,landuse,buildings] }
         visible: *label_visible_poi_landuse
-        filter: 
+        filter:
             not: { kind: [building,farm,peak,tree,gate,address] }
             any:
                 - area: false
@@ -3802,7 +3807,7 @@ layers:
                 offset: [[13,13px],[14,15px],[16,19px]]
                 interactive: true
                 font:
-                    family: Helvetica
+                    family: NotoSansMyanmar
                     weight: 500
                     fill: *text_fill
                     size: 12px
@@ -3989,7 +3994,7 @@ layers:
                         - { $zoom: [11], area: { min: 5000000 } }
                         - { $zoom: [12], area: { min: 5000000 } }
                         - { $zoom: [13], area: { min: 500000 } }
-                        - { $zoom: [14], area: { min: 20000 } }                    
+                        - { $zoom: [14], area: { min: 20000 } }
                         # show labels for smaller landuse areas at higher zooms
                         - { $zoom: [15], area: { min: 10000 } }
                         - { $zoom: [16], area: { min: 5000 } }
@@ -4107,7 +4112,7 @@ layers:
                     text:  { visible: false }
                     icons: { visible: false }
             office-early:
-                filter: 
+                filter:
                     any:
                         - { kind: [insurance, office, company], $zoom: [15], area: { max: 10000 } }
                         - { kind: [insurance, office, company], $zoom: [16], area: { max: 5000 } }
@@ -4182,14 +4187,14 @@ layers:
                         icons:
                             visible: false
                             #size: [[12, 10px], [14, 10px], [15, 16px]]
-                        text: { visible: false } 
+                        text: { visible: false }
                 low-priority-early-z14:
                     filter: { kind_tile_rank: { min: 7 }, area: false, $zoom: { min: 14, max: 15 } }
                     draw:
                         icons:
                             size: [[12, 10px], [14, 10px], [15, 16px]]
                             #visible: false
-                        text: { visible: false } 
+                        text: { visible: false }
             tram-stop-early:
                 filter: { kind: tram_stop, $zoom: { max: 15 } }
                 draw:
@@ -4658,7 +4663,7 @@ layers:
                 text:
                     font:
                         fill: *text_fill_water
-                        family: Helvetica
+                        family: NotoSansMyanmar
                         style: italic
                         weight: 500
                         size: 12px
@@ -4671,7 +4676,7 @@ layers:
             text:
                 font:
                     fill: *text_fill_water
-                    family: Helvetica
+                    family: NotoSansMyanmar
                     style: italic
                     weight: 500
                     size: 12px
@@ -4682,7 +4687,7 @@ layers:
     playa-labels:
         data: { source: osm, layer: [water] }
         visible: *text_visible_water_labels
-        filter: 
+        filter:
             all:
                 - name: true
                 - $geometry: point
@@ -4706,7 +4711,7 @@ layers:
             text:
                 font:
                     fill: grey
-                    family: Helvetica
+                    family: NotoSansMyanmar
                     style: italic
                     weight: 500
                     size: 12px
@@ -4728,7 +4733,7 @@ layers:
             text:
                 font:
                     fill: *text_fill_water
-                    family: Helvetica
+                    family: NotoSansMyanmar
                     style: italic
                     weight: 500
                     size: 12px
@@ -4743,11 +4748,11 @@ layers:
             draw:
                 text:
                     visible: false
-                 
+
     landuse:
         data: { source: osm }
         tier1:
-            filter: 
+            filter:
                 any:
                     # limit show smaller landuse areas to higher zooms
                     - { $zoom: { min: 3 },  area: { min: 300000000 } }
@@ -4777,7 +4782,7 @@ layers:
                         polygons:
                             color: *green1
         tier2:
-            filter: 
+            filter:
                 any:
                     # limit show smaller landuse areas to higher zooms
                     - { $zoom: { min: 4 },  area: { min: 1000000000 } }
@@ -4882,7 +4887,7 @@ layers:
                         color: [[0,*earth2],[9,*earth2]]
                         visible: *earth2_v
         tier3:
-            filter: 
+            filter:
                 any:
                     # limit show smaller landuse areas to higher zooms
                     - { $zoom: { min: 8 },  area: { min: 10000000 } }
@@ -4916,7 +4921,7 @@ layers:
                         color: *brown1
                         order: function() { return feature.sort_key - 2 || 1; }
         tier4:
-            filter: 
+            filter:
                 any:
                     # limit show smaller landuse areas to higher zooms
                     - { $zoom: { min: 10 }, area: { min: 1000000 } }
@@ -5001,7 +5006,7 @@ layers:
                     filter: { kind: [pier,bridge,breakwater,groyne,dike,cutline] }
                     draw: { polygons: { order: 5, color: *earth1 } }
         tier5:
-            filter: 
+            filter:
                 any:
                     # limit show smaller landuse areas to higher zooms
                     - { $zoom: { min: 12 }, area: { min: 500000 } }
@@ -5071,8 +5076,8 @@ layers:
                     polygons:
                         color: *brown2
         z-order:
-            draw: 
-                polygons: 
+            draw:
+                polygons:
                     order: function() { return feature.sort_key || 1; }
 
 
@@ -5096,7 +5101,7 @@ layers:
                     order: 3
                     color: *grey1
                     visible: *grey1_v
-                    
+
     landuse_urban_area-early:
         data: { source: osm, layer: landuse }
         filter:

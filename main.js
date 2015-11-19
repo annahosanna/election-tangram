@@ -5,12 +5,10 @@ map = (function () {
     'use strict';
 
     var locations = {
-        'Oakland': [37.8044, -122.2708, 15],
-        'New York': [40.70531887544228, -74.00976419448853, 15],
-        'Seattle': [47.5937, -122.3215, 15]
+        'Yangon': [16.8313077,96.2187007,11]
     };
 
-    var map_start_location = locations['Oakland'];
+    var map_start_location = locations['Yangon'];
 
     /*** URL parsing ***/
 
@@ -29,9 +27,9 @@ map = (function () {
     var map = L.map('map',
         {"keyboardZoomOffset" : .05, maxZoom: 20 }
     );
-        
+
     var layer = Tangram.leafletLayer({
-        scene: 'cinnabar-style-more-labels.yaml',
+        scene: 'cinnabar-style-more-labels.yaml?r=2',
         attribution: '<a href="https://mapzen.com/tangram" target="_blank">Tangram</a> | &copy; OSM contributors | <a href="https://mapzen.com/" target="_blank">Mapzen</a>'
     });
 
@@ -43,40 +41,17 @@ map = (function () {
     map.setView(map_start_location.slice(0, 3), map_start_location[2]);
 
     var hash = new L.Hash(map);
-    
+
 	function long2tile(lon,zoom) { return (Math.floor((lon+180)/360*Math.pow(2,zoom))); }
-	function lat2tile(lat,zoom)  { return (Math.floor((1-Math.log(Math.tan(lat*Math.PI/180) + 1/Math.cos(lat*Math.PI/180))/Math.PI)/2 *Math.pow(2,zoom))); }    
+	function lat2tile(lat,zoom)  { return (Math.floor((1-Math.log(Math.tan(lat*Math.PI/180) + 1/Math.cos(lat*Math.PI/180))/Math.PI)/2 *Math.pow(2,zoom))); }
 
     /***** Render loop *****/
-	
+
 	function addGUI () {
 		// Link to edit in OSM - hold 'e' and click
-		function onMapClick(e) {
-			if (key.shift) {
-				var url = 'https://www.openstreetmap.org/edit?';
-
-				if (scene.selection.feature && scene.selection.feature.id) {
-					url += 'way=' + scene.selection.feature.id;
-				}
-
-				if (scene.center) {
-					url += '#map=' + scene.baseZoom(scene.zoom) + '/' + scene.center.lat + '/' + scene.center.lng;
-				}
-
-				window.open(url, '_blank');
-			}
-
- 			if (key.command) {
-				var url = 'http://vector.mapzen.com/osm/all/' + scene.tile_zoom + '/' + long2tile(e.latlng.lng,scene.tile_zoom)  + '/' + lat2tile(e.latlng.lat,scene.tile_zoom) + '.topojson?api_key=vector-tiles-HqUVidw';
-				window.open(url, '_blank');
-				//console.log( e );
-			}
-		}
-
-		map.on('click', onMapClick);		
 	}
 
-	
+
      // Feature selection
     function initFeatureSelection () {
         // Selection info shown on hover
@@ -123,12 +98,12 @@ map = (function () {
                 }
             }
         });
-        
+
         // Show selected feature on hover
         scene.container.addEventListener('click', function (event) {
             var pixel = { x: event.clientX, y: event.clientY };
 
-			scene.getFeatureAt(pixel).then(function(selection) {    
+			scene.getFeatureAt(pixel).then(function(selection) {
 				if (!selection) {
 					return;
 				}
@@ -160,7 +135,7 @@ map = (function () {
 					selection_info.parentNode.removeChild(selection_info);
 				}
 			});
-			
+
             // Don't show labels while panning
             if (scene.panning == true) {
                 if (selection_info.parentNode != null) {
@@ -168,18 +143,18 @@ map = (function () {
                 }
             }
         });
-        
+
     }
 
     window.addEventListener('load', function () {
         // Scene initialized
         layer.on('init', function() {
 	        addGUI();
-        	initFeatureSelection();
+        	//initFeatureSelection();
         });
         layer.addTo(map);
     });
-    
+
     return map;
 
 }());
