@@ -453,7 +453,10 @@ sources:
         url:  //vector.mapzen.com/osm/all/{z}/{x}/{y}.topojson?api_key=vector-tiles-vqJh-uU
     townships:
         type: GeoJSON
-        url:  ./data/lowerhouse-winners.geojson
+        url:  ./data/lowerhouse-winners.geojson?r=2
+    townlabels:
+        type: GeoJSON
+        url:  ./data/lowerhouse-labelpoints.geojson
 
 camera:
     type: isometric
@@ -701,9 +704,22 @@ scene:
 
 layers:
     # Map overlays for styling the server response (using special source layer names) for route line, find_me location gem, and search result pins
+    townlabels:
+        data: { source: townlabels }
+        draw:
+            text:
+                text_source: function() { return feature.Myanmar3.replace(/့်/g, '့်') }
+                font:
+                    fill: *text_fill
+                    size: 12px
 
     townships:
         data: { source: townships }
+        draw:
+            lines:
+                color: '#000'
+                width: 1.5px
+                order: 100
         nld:
             filter:
                 any:
@@ -711,10 +727,6 @@ layers:
             draw:
                 polygons:
                     color: '#fcc'
-                lines:
-                    color: '#000'
-                    width: 1.5px
-                    order: 100
         usdp:
             filter:
                 any:
@@ -722,10 +734,73 @@ layers:
             draw:
                 polygons:
                     color: '#cfc'
-                lines:
-                    color: '#000'
-                    width: 1.5px
-                    order: 100
+
+        pao:
+            filter:
+                any:
+                    - { winner: 5 }
+            draw:
+                polygons:
+                    color: '#ffc'
+
+        snld:
+            filter:
+                any:
+                    - { winner: 47 }
+            draw:
+                polygons:
+                    color: '#88c'
+                    
+        arakan:
+            filter:
+                any:
+                    - { winner: 65 }
+            draw:
+                polygons:
+                    color: '#ccc'
+
+        zomi:
+            filter:
+                any:
+                    - { winner: 50 }
+            draw:
+                polygons:
+                    color: '#fa8'
+        taang:
+            filter:
+                any:
+                    - { winner: 11 }
+            draw:
+                polygons:
+                    color: '#faf'
+        wa:
+            filter:
+                any:
+                    - { winner: 26 }
+            draw:
+                polygons:
+                    color: 'skyblue'
+        kokang:
+            filter:
+                any:
+                    - { winner: 4 }
+            draw:
+                polygons:
+                    color: 'darkgreen'
+        independent:
+            filter:
+                any:
+                    - { winner: -1 }
+            draw:
+                polygons:
+                    color: 'pink'
+        lisu:
+            filter:
+                any:
+                    - { winner: 60 }
+            draw:
+                polygons:
+                    color: 'lavendar'
 
     route:
         data: { source: route }
@@ -1059,7 +1134,7 @@ layers:
                         priority: 2
                         visible: *text_visible_highway
                         #text_source: ref
-                        text_source: function() { if( feature.ref && feature.name ) { return feature.ref + " " + feature.name; } else { return feature.name; } }
+                        text_source: 'name:my'
                         font:
                             fill: *text_fill
                             size: 13px
@@ -1072,7 +1147,7 @@ layers:
                         priority: 2
                         visible: *text_visible_highway
                         #text_source: ref
-                        text_source: function() { if( feature.ref && feature.name ) { return feature.ref + " " + feature.name; } else { return feature.name; } }
+                        text_source: 'name:my'
                         font:
                             fill: *text_fill
                             size: 11px
@@ -1177,7 +1252,7 @@ layers:
                             text:
                                 priority: 3
                                 visible: *text_visible_trunk_primary
-                                text_source: function() { if( feature.ref && feature.name ) { return feature.ref + " " + feature.name; } else { return feature.name; } }
+                                text_source: 'name:my'
                                 font:
                                     fill: *text_fill
                                     size: 11px
@@ -1188,7 +1263,7 @@ layers:
                             text:
                                 priority: 3
                                 visible: *text_visible_trunk_primary
-                                text_source: function() { if( feature.ref && feature.name ) { return feature.ref + " " + feature.name; } else { return feature.name; } }
+                                text_source: 'name:my'
                                 font:
                                     fill: *text_fill
                                     size: 12px
@@ -1200,7 +1275,7 @@ layers:
                         text:
                             priority: 3
                             visible: *text_visible_trunk_primary_e
-                            text_source: function() { if( feature.ref && feature.name ) { if( feature.ref.length < 6 ) { return feature.ref + " " + feature.name; } else { return feature.name; } } else { return feature.name; } }
+                            text_source: 'name:my'
                             font:
                                 fill: *text_fill
                                 size: 11px
@@ -1212,7 +1287,7 @@ layers:
                         text:
                             priority: 3
                             visible: *text_visible_trunk_primary
-                            text_source: function() { if( feature.ref && feature.name ) { if( feature.ref.length < 6 ) { return feature.ref + " " + feature.name; } else { return feature.name; } } else { return feature.name; } }
+                            text_source: 'name:my'
                             font:
                                 fill: *text_fill
                                 size: 12px
@@ -1223,7 +1298,7 @@ layers:
                         text:
                             priority: 3
                             visible: *text_visible_trunk_primary
-                            text_source: function() { if( feature.ref && feature.name ) { if( feature.ref.length < 6 ) { return feature.ref + " " + feature.name; } else { return feature.name; } } else { return feature.name; } }
+                            text_source: 'name:my' 
                             font:
                                 fill: *text_fill
                                 size: 14px
@@ -1234,7 +1309,7 @@ layers:
                         text:
                             priority: 3
                             visible: *text_visible_trunk_primary
-                            text_source: function() { if( feature.ref && feature.name ) { return feature.ref + " " + feature.name; } else { return feature.name; } }
+                            text_source: 'name:my'
                             font:
                                 fill: *text_fill2
                                 size: 14px
@@ -1245,7 +1320,7 @@ layers:
                         text:
                             priority: 3
                             visible: *text_visible_trunk_primary
-                            text_source: function() { if( feature.ref && feature.name ) { return feature.ref + " " + feature.name; } else { return feature.name; } }
+                            text_source: 'name:my'
                             font:
                                 fill: *text_fill2
                                 size: 15px
@@ -1256,7 +1331,7 @@ layers:
                         text:
                             priority: 3
                             visible: *text_visible_trunk_primary
-                            text_source: function() { if( feature.ref && feature.name ) { return feature.ref + " " + feature.name; } else { return feature.name; } }
+                            text_source: 'name:my'
                             font:
                                 fill: *text_fill2
                                 size: 16px
@@ -2030,8 +2105,6 @@ layers:
             #todo: does forest belong here?
             filter: { landuse_kind: [park,forest,nature_reserve,conservation,golf_course,garden] }
             draw:
-                polygons:
-                    color: *green1_b
                 outline:
                     color: *green1_bo
             golf_course:
@@ -2199,7 +2272,7 @@ layers:
                 text:
                     priority: 2
                     visible: *text_visible_admin
-                    text_source: function() { if(feature["name:my"]) { return feature["name:my"].toUpperCase(); } else { return feature["name"].toUpperCase(); } }
+                    text_source: function() { if(feature["name:my"]) { return feature["name:my"] } else { return feature["name"].toUpperCase(); } }
                     font:
                         size: 11px
                         weight: 200
@@ -2239,7 +2312,7 @@ layers:
                 text:
                     priority: 2
                     visible: *text_visible_admin
-                    text_source: function() { if(feature["name:my"]) { return feature["name:my"].toUpperCase(); } else { return feature["name"].toUpperCase(); } }
+                    text_source: function() { if(feature["name:my"]) { return feature["name:my"]; } else { return feature["name"].toUpperCase(); } }
                     font:
                         size: 14px
                         weight: 800
@@ -2261,7 +2334,7 @@ layers:
                 text:
                     priority: 2
                     visible: *text_visible_admin
-                    text_source: function() { if(feature["name:my"]) { return feature["name:my"].toUpperCase(); } else { return feature["name:my"].toUpperCase(); } }
+                    text_source: 'name:my'
                     font:
                         size: 10px
                         weight: 200
@@ -2273,7 +2346,7 @@ layers:
                 text:
                     priority: 2
                     visible: *text_visible_admin
-                    text_source: function() { if(feature["name:my"]) { return feature["name:my"].toUpperCase(); } else { return feature["name:my"].toUpperCase(); } }
+                    text_source: 'name:my'
                     font:
                         size: 13px
                         weight: 200
@@ -2285,7 +2358,7 @@ layers:
                 text:
                     priority: 2
                     visible: *text_visible_admin
-                    text_source: function() { if(feature["name:my"]) { return feature["name:my"].toUpperCase(); } else { return feature["name:my"].toUpperCase(); } }
+                    text_source: 'name:my'
                     font:
                         size: 15px
                         weight: 200
@@ -2296,28 +2369,13 @@ layers:
                 text:
                     priority: 2
                     visible: *text_visible_admin
-                    text_source: function() { if(feature["name:my"]) { return feature["name:my"].toUpperCase(); } else { return feature["name"]; } }
+                    text_source: 'name:my'
                     font:
                         size: 14px
                         weight: 800
                         fill: *text_fill
                         stroke: { color: *text_stroke, width: 4 }
                         transform: uppercase
-    #            icons:
-    #                size: [[13, 12px], [15, 18px]]
-    #                interactive: true
-    #                sprite: *townspot_sprite
-            pesky:
-                filter: { name: ["Western Cape","Eastern Cape","Northern Cape","North West","Limpopo","KwaZulu-Natal","Hamburg","Freie und Hansestadt Hamburg","Neuchâtel","Nordrhein-Westfalen","Haute-Normandie","Baden-Württemberg","Bayern","Sachsen-Anhalt","Berlin","Mecklenburg-Vorpommern","Schleswig-Holstein","Brandenburg","Niedersachsen","Saarland","Thüringen","Hessen","Sachsen"], $zoom: {min: 6, max: 8} }
-                draw:
-                    text:
-                        visible: false
-            small-ones:
-                filter: { name: ["Delaware","New Jersey","Connecticut","Rhode Island","Massachusetts","New Hampshire","Vermont"], $zoom: {min: 6, max: 8} }
-                draw:
-                    text:
-                        text_source: function() { return feature["name:abbreviation"] || feature["name"]; }
-                        font: { transform: uppercase }
 
         populated-places:
             draw:
@@ -2451,95 +2509,20 @@ layers:
                                 font:
                                     size: 11px
 
-            populated-places-natural-earth-z6:
-                filter: { name: true, source: naturalearthdata.com, $zoom: [6] }
+            populated-places-osm-z6:
+                filter:
+                    all:
+                        - source: openstreetmap
+                        - name: true
+                        - population: true
+                        - not: { kind: [country, county, state, island, neighbourhood, suburb, quarter] }
+                        - $zoom: [6]
                 draw: { text: { font: { fill: *text_fill } } }
+
                 z6places-1:
-                    filter: { scalerank: [0,1] }
-                    draw:
-                        text:
-                            priority: 1
-                            interactive: true
-                            visible: *text_visible_populated_places
-                            font:
-                                size: 15px
-                        icons:
-                            size: 13px
-                            interactive: true
-                            visible: *icon_visible_populated_places
-                            sprite: townspot-m-rev
-                    capital:
-                        filter: { capital: yes }
-                        draw:
-                            text:
-                                font:
-                                    size: 15px
-                            icons:
-                                sprite: capital-m
-
-                z6places-2:
-                    filter: { scalerank: [2,3,4] }
-                    draw:
-                        text:
-                            priority: 1
-                            interactive: true
-                            visible: *text_visible_populated_places
-                            font:
-                                size: 12px
-                        icons:
-                            size: 11px
-                            interactive: true
-                            visible: *icon_visible_populated_places
-                            sprite: townspot-s-rev
-                    capital:
-                        filter: { capital: yes }
-                        draw:
-                            text:
-                                font:
-                                    size: 15px
-                            icons:
-                                sprite: capital-s
-                    state_capital:
-                        filter: { state_capital: yes }
-                        draw:
-                            text:
-                                font:
-                                    size: 12px
-
-                z6places-3:
-                    filter: { scalerank: [5,6] }
-                    draw:
-                        text:
-                            priority: 1
-                            interactive: true
-                            visible: *text_visible_populated_places
-                            font:
-                                size: 10px
-                        icons:
-                            size: 9px
-                            interactive: true
-                            visible: *icon_visible_populated_places
-                            sprite: townspot-xs-rev
-                    capital:
-                        filter: { capital: yes }
-                        draw:
-                            text:
-                                font:
-                                    size: 12px
-                            icons:
-                                sprite: capital-s
-                    state_capital:
-                        filter: { state_capital: yes }
-                        draw:
-                            text:
-                                font:
-                                    size: 10px
-
-            populated-places-natural-earth-z7:
-                filter: { name: true, source: naturalearthdata.com, $zoom: [7] }
-                draw: { text: { font: { fill: *text_fill } } }
-                z7places-1:
-                    filter: { scalerank: [0,1] }
+                    filter:
+                        any:
+                            - { population: { min: 1000000 } }
                     draw:
                         text:
                             priority: 1
@@ -2561,8 +2544,44 @@ layers:
                             icons:
                                 sprite: capital-m
 
+            populated-places-osm-z7:
+                filter:
+                    all:
+                        - source: openstreetmap
+                        - name: true
+                        - population: true
+                        - not: { kind: [country, county, state, island, neighbourhood, suburb, quarter] }
+                        - $zoom: [7]
+                draw: { text: { font: { fill: *text_fill } } }
+
+                z7places-1:
+                    filter:
+                        any:
+                            - { population: { min: 1000000 } }
+                    draw:
+                        text:
+                            priority: 1
+                            interactive: true
+                            visible: *text_visible_populated_places
+                            font:
+                                size: 16px
+                        icons:
+                            size: 14px
+                            interactive: true
+                            visible: *icon_visible_populated_places
+                            sprite: townspot-m-rev
+                    capital:
+                        filter: { capital: yes }
+                        draw:
+                            text:
+                                font:
+                                    size: 16px
+                            icons:
+                                sprite: capital-m
                 z7places-2:
-                    filter: { scalerank: [2,3,4,5] }
+                    filter:
+                        any:
+                            - { population: { min: 150000, max: 999999 } }
                     draw:
                         text:
                             priority: 1
@@ -2580,7 +2599,7 @@ layers:
                         draw:
                             text:
                                 font:
-                                    size: 16px
+                                    size: 17px
                             icons:
                                 sprite: capital-m
                     state_capital:
@@ -2588,36 +2607,7 @@ layers:
                         draw:
                             text:
                                 font:
-                                    size: 14px
-
-                z7places-3:
-                    filter: { scalerank: [6,7] }
-                    draw:
-                        text:
-                            priority: 1
-                            interactive: true
-                            visible: *text_visible_populated_places
-                            font:
-                                size: 11px
-                        icons:
-                            size: 9px
-                            interactive: true
-                            visible: *icon_visible_populated_places
-                            sprite: townspot-s-rev
-                    capital:
-                        filter: { capital: yes }
-                        draw:
-                            text:
-                                font:
-                                    size: 14px
-                            icons:
-                                sprite: capital-s
-                    state_capital:
-                        filter: { state_capital: yes }
-                        draw:
-                            text:
-                                font:
-                                    size: 12px
+                                    size: 15px
 
             populated-places-osm-z8:
                 filter:
@@ -4094,7 +4084,7 @@ layers:
                     filter: { kind: [residential], osm_relation: true }
                     draw:
                         icons:
-                            text: { visible: true, text_source: short_name, font: { fill: red } }
+                            text: { visible: true, text_source: 'name:my', font: { fill: red } }
                             icons: { visible: false }
                 hide-till-later:
                     filter: { kind: [pedestrian,common,railway,ship,houseboat,common,grass,wetland,pitch], $zoom: { max: 17 } }
@@ -4772,9 +4762,6 @@ layers:
                     - { $zoom: { min: 16 } }
             national_park:
                 filter: { kind: [national_park, "park or protected land"], not: { operator: [ "United States Forest Service", "US Forest Service", "U.S. Forest Service", "USDA Forest Service" ] } }
-                draw:
-                    polygons:
-                      color: *green7
                 us_national_park:
                     # yosemite national park, death valley national park, grand canyon national park
                     filter: { operator: [ "United States National Park Service", "US National Park Service" ] }
@@ -4803,14 +4790,9 @@ layers:
                 filter:
                     kind: [conservation, protected_area, nature_reserve]
                     $zoom: { min: 6 }
-                draw:
-                    polygons:
-                        color: *green8
                 wilderness-areas:
                     filter: function() { return feature.name && feature.name.indexOf("Wilderness") > -1 }
                     draw:
-                        polygons:
-                            color: [[5,*green7],[8,*green1_w]]
                         outline:
                             style: lines
                             order: 3
@@ -4819,8 +4801,6 @@ layers:
                 national_forest_level_6:
                     filter: { protect_class: ["6",6] }
                     draw:
-                        polygons:
-                            color: *green7
                         lines:
                             order: 10
                             color: *earth1
@@ -4840,8 +4820,6 @@ layers:
                     filter:
                         operator: [ "United States Forest Service", "US Forest Service", "U.S. Forest Service", "USDA Forest Service" ]
                     draw:
-                        polygons:
-                            color: *green7
                         lines:
                             order: 10
                             color: *earth1
@@ -4850,20 +4828,12 @@ layers:
                     filter:
                         not: { operator: [ "United States Forest Service", "US Forest Service", "U.S. Forest Service", "USDA Forest Service" ] }
                         $zoom: { min: 10 }
-                    draw:
-                        polygons:
-                            color: *green9
 
             nature_reserve:
                 filter: { kind: nature_reserve, $zoom: { min: 7 } }
-                draw:
-                    polygons:
-                        color: *green6
                 wilderness-areas:
                     filter: function() { return feature.name && feature.name.indexOf("Wilderness") > -1 }
                     draw:
-                        polygons:
-                            color: *green7
                         outline:
                             style: lines
                             color: *green6
@@ -4872,20 +4842,11 @@ layers:
                 filter: { $zoom: { min: 4 }, kind: [park, national_park, "park or protected land"], not: { operator: [ "United States National Park Service", "US National Park Service" ] } }
                 # default for national forests and more?
                 draw:
-                    polygons:
-                        color: *green7
-                        order: function() { return feature.sort_key + 1 || 1; }
                     lines:
                         order: 3
                         color: *earth1
                         width: [[7,0px],[8,1px],[10,2px]]
-            urban:
-                filter: { kind: [urban, rural, residential] }
-                visible: *earth2_v
-                draw:
-                    polygons:
-                        color: [[0,*earth2],[9,*earth2]]
-                        visible: *earth2_v
+
         tier3:
             filter:
                 any:
@@ -5101,17 +5062,6 @@ layers:
                     order: 3
                     color: *grey1
                     visible: *grey1_v
-
-    landuse_urban_area-early:
-        data: { source: osm, layer: landuse }
-        filter:
-            # This is from Natural Earth and only shows up from zoom(0,9)
-            kind: ['urban area']
-        visible: *earth2_ev
-        draw:
-            polygons:
-                order: 1
-                color: [[0,*earth2_e],[6,*earth2_e2],[8,*earth2_e3]]
 
     debug:
         data: { source: osm }
